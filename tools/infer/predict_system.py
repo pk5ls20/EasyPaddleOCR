@@ -60,7 +60,7 @@ class TextSystem(object):
 
         start = time.time()
         ori_im = img.copy()
-        dt_boxes, elapse = self.text_detector(img)
+        dt_boxes, elapse = self.text_detector(img) # 进入位置检测器
         time_dict['det'] = elapse
 
         if dt_boxes is None:
@@ -89,7 +89,7 @@ class TextSystem(object):
             logger.debug("cls num  : {}, elapsed : {}".format(
                 len(img_crop_list), elapse))
 
-        rec_res, elapse = self.text_recognizer(img_crop_list)
+        rec_res, elapse = self.text_recognizer(img_crop_list) # 进入文字识别器
         time_dict['rec'] = elapse
         logger.debug("rec_res num  : {}, elapsed : {}".format(
             len(rec_res), elapse))
