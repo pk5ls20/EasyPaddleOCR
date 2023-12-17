@@ -14,7 +14,7 @@ import time
 import logging
 from PIL import Image
 
-from tools.infer.utility import get_minarea_rect_crop, get_rotate_crop_image, parse_args, check_gpu, init_args
+from tools_utility import get_minarea_rect_crop, get_rotate_crop_image, parse_args, check_gpu, init_args
 from torchocr.utils.utility import get_image_file_list, check_and_read
 from torchocr.utils.logging import get_logger
 from torchocr.utils.visual import draw_system
