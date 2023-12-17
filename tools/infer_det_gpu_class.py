@@ -40,16 +40,19 @@ class OCRDetector:
         with torch.no_grad():
             preds = self.model(images)
         post_result = self.post_process_class(preds, [-1, shape_list])
-        src_img = ndarray_image
+        # 转换精度， 似乎是int32 -> float32
         if isinstance(post_result, dict):
-            boxes = [box for sublist in post_result.values() for box in sublist[0]['points']]
+            boxes = [np.array(box, dtype=np.float32) for sublist in post_result.values() for box in
+                     sublist[0]['points']]
         else:
-            boxes = post_result[0]['points']
+            boxes = np.array(post_result[0]['points'], dtype=np.float32)
+        print(111)
+        return boxes, 114514 # 先返回个114514，本来这是时间
 
-        boxes = sorted_boxes(np.array(boxes))
-        img_crop_list = [get_minarea_rect_crop(src_img, box) for box in boxes]
-
-        return img_crop_list, 114514 # 先返回个114514，本来这是时间
+        # boxes = sorted_boxes(np.array(boxes))
+        # img_crop_list = [get_minarea_rect_crop(src_img, box) for box in boxes]
+        #
+        # return img_crop_list, 114514 # 先返回个114514，本来这是时间
 
 
 def build_det_process(cfg):
@@ -63,29 +66,6 @@ def build_det_process(cfg):
         transforms.append(op)
     return transforms
 
-
-def sorted_boxes(dt_boxes):
-    """
-    Sort text boxes in order from top to bottom, left to right
-    args:
-        dt_boxes(array):detected text boxes with shape [4, 2]
-    return:
-        sorted boxes(array) with shape [4, 2]
-    """
-    num_boxes = dt_boxes.shape[0]
-    sorted_boxes = sorted(dt_boxes, key=lambda x: (x[0][1], x[0][0]))
-    _boxes = list(sorted_boxes)
-
-    for i in range(num_boxes - 1):
-        for j in range(i, -1, -1):
-            if abs(_boxes[j + 1][0][1] - _boxes[j][0][1]) < 10 and \
-                    (_boxes[j + 1][0][0] < _boxes[j][0][0]):
-                tmp = _boxes[j]
-                _boxes[j] = _boxes[j + 1]
-                _boxes[j + 1] = tmp
-            else:
-                break
-    return _boxes
 
 if __name__ == '__main__':
     FLAGS = ArgsParser().parse_args()

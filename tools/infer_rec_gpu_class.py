@@ -63,10 +63,10 @@ class OCRModel:
             images, others = self.prepare_data(batch)
             preds = self.infer(images, others)
             info = self.format_result(preds)
-            info = (info.split('\t')[0], info.split('\t')[1])
+            info = (info.split('\t')[0], float(info.split('\t')[1]))
             self.logger.info(f"Image result: {info}")
             results.append(info)
-        return results
+        return results, 1919810
 
     def prepare_data(self, batch):
         images = np.expand_dims(batch[0], axis=0)

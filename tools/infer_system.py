@@ -66,7 +66,6 @@ class TextSystem(object):
         ori_im = img.copy()
         dt_boxes, elapse = self.text_detector(img)  # 进入位置检测器
         time_dict['det'] = elapse
-
         if dt_boxes is None:
             logger.debug("no dt_boxes found, elapsed : {}".format(elapse))
             end = time.time()
@@ -76,44 +75,36 @@ class TextSystem(object):
             logger.debug("dt_boxes num : {}, elapsed : {}".format(
                 len(dt_boxes), elapse))
         img_crop_list = []
-
-        # dt_boxes = sorted_boxes(dt_boxes)  # 这句有问题
-
+        dt_boxes = sorted_boxes(dt_boxes)  # 这句有问题
         for bno in range(len(dt_boxes)):
             tmp_box = copy.deepcopy(dt_boxes[bno])
-            # img_crop = get_minarea_rect_crop(ori_im, tmp_box)
-            # if self.args.det_box_type == "quad":
-            #     img_crop = get_rotate_crop_image(ori_im, tmp_box)
-            # else:
-            #     img_crop = get_minarea_rect_crop(ori_im, tmp_box)
-            # img_crop_list.append(img_crop)
-            img_crop_list.append(tmp_box)
+            if self.args.det_box_type == "quad":
+                img_crop = get_rotate_crop_image(ori_im, tmp_box)
+            else:
+                img_crop = get_minarea_rect_crop(ori_im, tmp_box)
+            img_crop_list.append(img_crop)
         # if self.use_angle_cls and cls:
         #     img_crop_list, angle_list, elapse = self.text_classifier(
         #         img_crop_list)
         #     time_dict['cls'] = elapse
         #     logger.debug("cls num  : {}, elapsed : {}".format(
         #         len(img_crop_list), elapse))
-
-        # rec_res, elapse = self.text_recognizer(img_crop_list)  # 进入文字识别器
-        # return rec_res
-        rec_res = self.text_recognizer(img_crop_list)  # 进入文字识别器
-        return rec_res
-        # time_dict['rec'] = elapse
-        # logger.debug("rec_res num  : {}, elapsed : {}".format(
-        #     len(rec_res), elapse))
-        # if self.args.save_crop_res:
-        #     self.draw_crop_rec_res(self.args.crop_res_save_dir, img_crop_list,
-        #                            rec_res)
-        # filter_boxes, filter_rec_res = [], []
-        # for box, rec_result in zip(dt_boxes, rec_res):
-        #     text, score = rec_result
-        #     if score >= self.drop_score:
-        #         filter_boxes.append(box)
-        #         filter_rec_res.append(rec_result)
-        # end = time.time()
-        # time_dict['all'] = end - start
-        # return filter_boxes, filter_rec_res, time_dict
+        rec_res, elapse = self.text_recognizer(img_crop_list)  # 进入文字识别器
+        time_dict['rec'] = elapse
+        logger.debug("rec_res num  : {}, elapsed : {}".format(
+            len(rec_res), elapse))
+        if self.args.save_crop_res:
+            self.draw_crop_rec_res(self.args.crop_res_save_dir, img_crop_list,
+                                   rec_res)
+        filter_boxes, filter_rec_res = [], []
+        for box, rec_result in zip(dt_boxes, rec_res):
+            text, score = rec_result
+            if score >= self.drop_score:
+                filter_boxes.append(box)
+                filter_rec_res.append(rec_result)
+        end = time.time()
+        time_dict['all'] = end - start
+        return filter_boxes, filter_rec_res, time_dict
 
 
 def sorted_boxes(dt_boxes):
