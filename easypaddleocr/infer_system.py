@@ -3,11 +3,11 @@ import cv2
 import copy
 import time
 import logging
-from tools_utility import get_minarea_rect_crop, get_rotate_crop_image
-from torchocr.utils.logging import get_logger
-from infer_det_gpu_class import TextDetector
-from infer_rec_gpu_class import TextRecognizer
-from infer_cls_gpu_class import TextClassifier
+from .tools_utility import get_minarea_rect_crop, get_rotate_crop_image
+from .torchocr.utils.logging import get_logger
+from .infer_det_class import TextDetector
+from .infer_rec_class import TextRecognizer
+from .infer_cls_class import TextClassifier
 
 logger = get_logger()
 
@@ -19,17 +19,20 @@ class InferSystem:
         self.use_angle_cls = kwargs.get("use_angle_cls", False)
         self.text_detector = TextDetector(
             kwargs.get("det_model_config"),
-            kwargs.get("det_model_name")
+            kwargs.get("det_model_name"),
+            kwargs.get("devices")
         )
         self.text_recognizer = TextRecognizer(
             kwargs.get("rec_model_config"),
             kwargs.get("rec_model_name"),
-            kwargs.get("character_dict_path")
+            kwargs.get("character_dict_path"),
+            kwargs.get("devices")
         )
         if self.use_angle_cls:
             self.text_classifier = TextClassifier(
                 kwargs.get("cls_model_config"),
-                kwargs.get("cls_model_name")
+                kwargs.get("cls_model_name"),
+                kwargs.get("devices")
             )
         self.drop_score = kwargs.get("drop_score", 0.5)
         self.det_box_type = kwargs.get("det_box_type", "quad")

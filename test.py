@@ -1,3 +1,0 @@
-import easypaddleocr
-
-easypaddleocr.EasyPaddleOCR()
