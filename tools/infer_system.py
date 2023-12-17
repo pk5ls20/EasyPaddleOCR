@@ -75,7 +75,7 @@ class TextSystem(object):
             logger.debug("dt_boxes num : {}, elapsed : {}".format(
                 len(dt_boxes), elapse))
         img_crop_list = []
-        dt_boxes = sorted_boxes(dt_boxes)  # 这句有问题
+        dt_boxes = sorted_boxes(dt_boxes)
         for bno in range(len(dt_boxes)):
             tmp_box = copy.deepcopy(dt_boxes[bno])
             if self.args.det_box_type == "quad":
@@ -161,33 +161,33 @@ def main(args):
                 logger.info(f"error in loading image:{image_file}")
                 continue
             tic = time.time()
-            # dt_boxes, rec_res, time_dict = text_sys(img)
+            dt_boxes, rec_res, time_dict = text_sys(img)
             txt = text_sys(img)
-            # elapse = time.time() - tic
-            # total_time += elapse
-            #
-            # logger.debug(f"Predict time of {image_file}: {elapse:.3f}s")
-            # for text, score in rec_res:
-            #     logger.debug(f"{text}, {score:.3f}")
-            #
-            # res = [{
-            #     "transcription": rec_res[i][0],
-            #     "points": np.array(dt_boxes[i]).astype(np.int32).tolist(),
-            # } for i in range(len(dt_boxes))]
-            # out_str = f'{image_file}\t{json.dumps(res)}'
-            # fout.write(out_str + '\n')
-            #
-            # if is_visualize:
-            #     image = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
-            #     boxes = dt_boxes
-            #     txts = [rec_res[i][0] for i in range(len(rec_res))]
-            #     scores = [rec_res[i][1] for i in range(len(rec_res))]
-            #
-            #     draw_img = draw_system(image, boxes, txts, scores, drop_score=args.drop_score,
-            #                            font_path=args.vis_font_path)
-            #     save_path = os.path.join(save_res_path, f'inference_system_{os.path.basename(image_file)}')
-            #     cv2.imwrite(save_path, draw_img[:, :, ::-1])
-            #     logger.debug(f"The visualized image saved in {save_path}")
+            elapse = time.time() - tic
+            total_time += elapse
+
+            logger.debug(f"Predict time of {image_file}: {elapse:.3f}s")
+            for text, score in rec_res:
+                logger.debug(f"{text}, {score:.3f}")
+
+            res = [{
+                "transcription": rec_res[i][0],
+                "points": np.array(dt_boxes[i]).astype(np.int32).tolist(),
+            } for i in range(len(dt_boxes))]
+            out_str = f'{image_file}\t{json.dumps(res)}'
+            fout.write(out_str + '\n')
+
+            if is_visualize:
+                image = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+                boxes = dt_boxes
+                txts = [rec_res[i][0] for i in range(len(rec_res))]
+                scores = [rec_res[i][1] for i in range(len(rec_res))]
+
+                draw_img = draw_system(image, boxes, txts, scores, drop_score=args.drop_score,
+                                       font_path=args.vis_font_path)
+                save_path = os.path.join(save_res_path, f'inference_system_{os.path.basename(image_file)}')
+                cv2.imwrite(save_path, draw_img[:, :, ::-1])
+                logger.debug(f"The visualized image saved in {save_path}")
 
 
 if __name__ == "__main__":
