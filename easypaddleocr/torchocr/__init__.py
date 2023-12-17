@@ -1,1 +1,1 @@
-from .engine import Config, Trainer
+from .engine import Config
