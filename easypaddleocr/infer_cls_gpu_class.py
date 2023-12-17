@@ -1,13 +1,14 @@
 import cv2
+import time
 import torch
 import numpy as np
-from torchocr.data import create_operators, transform
-from torchocr.modeling.architectures import build_model
-from torchocr.postprocess import build_post_process
+from torchocr import Config
 from torchocr.utils.ckpt import load_ckpt
 from torchocr.utils.logging import get_logger
+from torchocr.postprocess import build_post_process
+from torchocr.data import create_operators, transform
+from torchocr.modeling.architectures import build_model
 from utility import update_rec_head_out_channels
-from torchocr import Config
 
 
 class TextClassifier:
@@ -23,10 +24,11 @@ class TextClassifier:
         load_ckpt(self.model, self.cfg)
         self.model.to(self.device)
         self.model.eval()
-        self.transforms = build_cls_process(self.cfg)
+        self.transforms = self.build_cls_process(self.cfg)
         self.ops = create_operators(self.transforms, self.cfg['Global'])
 
     def __call__(self, image_list):
+        start_time = time.time()
         result_list = []
         self.cfg['Global']['infer_mode'] = True
         for i, img in enumerate(image_list):
@@ -47,27 +49,18 @@ class TextClassifier:
                 img = cv2.rotate(img, cv2.ROTATE_180)
                 image_list[i] = img
             result_list.append(post_result)
-        return image_list, result_list, 1145141919810
+        return image_list, result_list, time.time() - start_time
 
-
-def build_cls_process(cfg):
-    transforms = []
-    for op in cfg['Eval']['dataset']['transforms']:
-        op_name = list(op)[0]
-        if 'Label' in op_name:
-            continue
-        elif op_name == 'KeepKeys':
-            op[op_name]['keep_keys'] = ['image']
-        elif op_name == "SSLRotateResize":
-            op[op_name]["mode"] = "test"
-        transforms.append(op)
-    return transforms
-
-
-if __name__ == '__main__':
-    # Example usage:
-    config_path = 'configs/cls/cls_mv3.yml'
-    ocr_classifier = TextClassifier(config_path)
-    image_array = np.random.rand(5, 224, 224, 3)
-    results = ocr_classifier(image_array)
-    print(results)
+    @staticmethod
+    def build_cls_process(cfg):
+        transforms = []
+        for op in cfg['Eval']['dataset']['transforms']:
+            op_name = list(op)[0]
+            if 'Label' in op_name:
+                continue
+            elif op_name == 'KeepKeys':
+                op[op_name]['keep_keys'] = ['image']
+            elif op_name == "SSLRotateResize":
+                op[op_name]["mode"] = "test"
+            transforms.append(op)
+        return transforms

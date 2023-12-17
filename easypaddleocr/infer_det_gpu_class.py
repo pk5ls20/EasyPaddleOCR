@@ -1,12 +1,12 @@
-import numpy as np
+import time
 import torch
-from torchocr.data import create_operators, transform
-from torchocr.modeling.architectures import build_model
-from torchocr.postprocess import build_post_process
+import numpy as np
+from torchocr import Config
 from torchocr.utils.ckpt import load_ckpt
 from torchocr.utils.logging import get_logger
-from torchocr import Config
-from utility import ArgsParser
+from torchocr.postprocess import build_post_process
+from torchocr.data import create_operators, transform
+from torchocr.modeling.architectures import build_model
 
 
 class TextDetector:
@@ -22,8 +22,8 @@ class TextDetector:
         self.model.eval()
         pre_process_list = [{
             'DetResizeForTest': {
-                'limit_side_len': 960, # args.det_limit_side_len
-                'limit_type': "max",  # args.det_limit_type
+                'limit_side_len': 960,
+                'limit_type': "max",
             }
         }, {
             'NormalizeImage': {
@@ -39,15 +39,11 @@ class TextDetector:
                 'keep_keys': ['image', 'shape']
             }
         }]
-        self.ops = create_operators(pre_process_list) # 挪用predict_det的预处理
-        # self.ops = create_operators(build_det_process(self.cfg), self.cfg['Global'])
-        # 之前的create_operators(build_det_process(self.cfg), self.cfg['Global']) 的预处理，只是上面的'KeepKeys'吗？
+        self.ops = create_operators(pre_process_list)  # 挪用predict_det的预处理
         self.post_process_class = build_post_process(self.cfg['PostProcess'])
 
     def __call__(self, ndarray_image):
-        # retval, buffer = cv2.imencode('.jpg', ndarray_image)
-        # img_bytes = np.array(buffer).tobytes()
-        # data = {'image': img_bytes}
+        start_time = time.time()
         data = {'image': ndarray_image}
         batch = transform(data, self.ops)
         images = np.expand_dims(batch[0], axis=0)
@@ -62,32 +58,16 @@ class TextDetector:
                      sublist[0]['points']]
         else:
             boxes = np.array(post_result[0]['points'], dtype=np.float32)
-        print(111)
-        return boxes, 114514 # 先返回个114514，本来这是时间
+        return boxes, time.time() - start_time
 
-        # boxes = sorted_boxes(np.array(boxes))
-        # img_crop_list = [get_minarea_rect_crop(src_img, box) for box in boxes]
-        #
-        # return img_crop_list, 114514 # 先返回个114514，本来这是时间
-
-
-def build_det_process(cfg):
-    transforms = []
-    for op in cfg['Eval']['dataset']['transforms']:
-        op_name = list(op)[0]
-        if 'Label' in op_name:
-            continue
-        elif op_name == 'KeepKeys':
-            op[op_name]['keep_keys'] = ['image', 'shape']
-        transforms.append(op)
-    return transforms
-
-
-if __name__ == '__main__':
-    FLAGS = ArgsParser().parse_args()
-    ocr_detector = TextDetector(FLAGS.config)
-    FLAGS = vars(FLAGS)
-    opt = FLAGS.pop('opt')
-    ocr_detector.cfg.merge_dict(FLAGS)
-    ocr_detector.cfg.merge_dict(opt)
-
+    @staticmethod
+    def build_det_process(cfg):
+        transforms = []
+        for op in cfg['Eval']['dataset']['transforms']:
+            op_name = list(op)[0]
+            if 'Label' in op_name:
+                continue
+            elif op_name == 'KeepKeys':
+                op[op_name]['keep_keys'] = ['image', 'shape']
+            transforms.append(op)
+        return transforms
