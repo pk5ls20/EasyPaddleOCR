@@ -9,7 +9,7 @@ Global:
   pretrained_model:
   checkpoints:
   use_tensorboard: False
-  infer_img: doc/imgs_words/ch/word_1.jpg
+  infer_img: img2
   label_list: &label_list ['0','180']
 
 Export:

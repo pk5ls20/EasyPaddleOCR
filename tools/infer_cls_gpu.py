@@ -53,11 +53,15 @@ def main(cfg):
             img = f.read()
             data = {'image': img}
         batch = transform(data, ops)
+        if batch is None:
+            logger.info("error in loading image:{}".format(file))
+            continue
         images = np.expand_dims(batch[0], axis=0)
         images = torch.from_numpy(images).to(device)
         with torch.no_grad():
             preds = model(images)
         post_result = post_process_class(preds)
+        print(f"114514!! - {len(post_result)}")
         for rec_result in post_result:
             logger.info('\t result: {}'.format(rec_result))
     logger.info("success!")

@@ -9,7 +9,7 @@ Global:
   pretrained_model:
   checkpoints:
   use_tensorboard: false
-  infer_img: doc/imgs/1.jpg
+  infer_img: img
 
 Export:
   export_dir:
