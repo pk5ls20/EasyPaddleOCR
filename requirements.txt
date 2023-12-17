@@ -2,12 +2,7 @@ shapely
 scikit-image
 imgaug
 pyclipper
-lmdb
-tqdm
 numpy
-tensorboard
-rapidfuzz
 opencv-python
-lxml
 Pillow
 pyyaml

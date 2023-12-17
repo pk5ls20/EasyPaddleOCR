@@ -9,7 +9,6 @@ from torch.utils.data import DataLoader, DistributedSampler
 
 from .imaug import transform, create_operators
 from ..data.simple_dataset import SimpleDataSet, MultiScaleDataSet
-from ..data.lmdb_dataset import LMDBDataSet, LMDBDataSetSR, LMDBDataSetTableMaster
 from ..data.pgnet_dataset import PGDataSet
 from ..data.pubtab_dataset import PubTabDataSet
 from ..data.multi_scale_sampler import MultiScaleSampler
