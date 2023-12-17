@@ -26,13 +26,35 @@ class OCRDetector:
         load_ckpt(self.model, self.cfg)
         self.model.to(self.device)
         self.model.eval()
+        pre_process_list = [{
+            'DetResizeForTest': {
+                'limit_side_len': 960, # args.det_limit_side_len
+                'limit_type': "max",  # args.det_limit_type
+            }
+        }, {
+            'NormalizeImage': {
+                'std': [0.229, 0.224, 0.225],
+                'mean': [0.485, 0.456, 0.406],
+                'scale': '1./255.',
+                'order': 'hwc'
+            }
+        }, {
+            'ToCHWImage': None
+        }, {
+            'KeepKeys': {
+                'keep_keys': ['image', 'shape']
+            }
+        }]
+        self.ops = create_operators(pre_process_list) # 挪用predict_det的预处理
+        # self.ops = create_operators(build_det_process(self.cfg), self.cfg['Global'])
+        # 之前的create_operators(build_det_process(self.cfg), self.cfg['Global']) 的预处理，只是上面的'KeepKeys'吗？
         self.post_process_class = build_post_process(self.cfg['PostProcess'])
-        self.ops = create_operators(build_det_process(self.cfg), self.cfg['Global'])
 
     def __call__(self, ndarray_image):
-        retval, buffer = cv2.imencode('.jpg', ndarray_image)
-        img_bytes = np.array(buffer).tobytes()
-        data = {'image': img_bytes}
+        # retval, buffer = cv2.imencode('.jpg', ndarray_image)
+        # img_bytes = np.array(buffer).tobytes()
+        # data = {'image': img_bytes}
+        data = {'image': ndarray_image}
         batch = transform(data, self.ops)
         images = np.expand_dims(batch[0], axis=0)
         shape_list = np.expand_dims(batch[1], axis=0)

@@ -186,7 +186,10 @@ def main(args):
                 draw_img = draw_system(image, boxes, txts, scores, drop_score=args.drop_score,
                                        font_path=args.vis_font_path)
                 save_path = os.path.join(save_res_path, f'inference_system_{os.path.basename(image_file)}')
-                cv2.imwrite(save_path, draw_img[:, :, ::-1])
+                try:
+                    cv2.imwrite(save_path, draw_img[:, :, ::-1])
+                except Exception as e:
+                    print(e)
                 logger.debug(f"The visualized image saved in {save_path}")
 
 
