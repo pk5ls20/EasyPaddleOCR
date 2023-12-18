@@ -18,6 +18,3 @@ print(result)
 - https://github.com/WenmuZhou/PytorchOCR
 - https://github.com/PaddlePaddle/PaddleOCR
 - https://github.com/frotms/PaddleOCR2Pytorch
-
-## Other notes
-This Repository is developed based on https://github.com/pk5ls20/PytorchOCR, which forks from https://github.com/WenmuZhou/PytorchOCR

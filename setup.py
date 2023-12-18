@@ -17,5 +17,7 @@ setup(
         "loguru",
         "huggingface_hub"
     ],
-    author="pk5ls20, hv0905"
+    author="pk5ls20, hv0905",
+    long_description=open('readme.md').read(),
+    long_description_content_type='text/markdown',
 )
