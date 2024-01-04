@@ -15,7 +15,6 @@ jobs:
         uses: actions/setup-python@v3
         with:
           python-version: ${{ matrix.python-version }}
-          cache: 'pip'
       - name: Build Package
         run: |
           python3 -m pip install build
