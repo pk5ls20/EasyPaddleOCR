@@ -1,17 +1,18 @@
 name: Publish Python 🐍 distribution 📦 to PyPI and TestPyPI
 
 on:
-  push:
   workflow_dispatch:
+  workflow_run:
+    workflows: [ "basic test" ]  # 依赖的工作流名称
+    types:
+      - completed
+    conclusions:
+      - success
 
 jobs:
-  test:
-    uses: ./.github/workflows/test.yml
   build:
     name: Build distribution 📦
     runs-on: ubuntu-latest
-    needs:
-      - test
     steps:
     - uses: actions/checkout@v4
     - name: Set up Python
