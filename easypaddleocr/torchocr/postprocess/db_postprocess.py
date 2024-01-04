@@ -118,7 +118,7 @@ class DBPostProcess(object):
             if sside < self.min_size + 2:
                 continue
             box = np.array(box)
-
+            # 将坐标映射到预处理前图像的相应坐标
             box[:, 0] = np.clip(
                 np.round(box[:, 0] / width * dest_width), 0, dest_width)
             box[:, 1] = np.clip(

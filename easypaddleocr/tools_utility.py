@@ -7,8 +7,10 @@ import torch.cuda
 def str2bool(v):
     return v.lower() in ("true", "yes", "t", "y", "1")
 
+
 def str2int_tuple(v):
     return tuple([int(i.strip()) for i in v.split(",")])
+
 
 def init_args():
     parser = argparse.ArgumentParser()
@@ -69,6 +71,7 @@ def init_args():
 def parse_args():
     parser = init_args()
     return parser.parse_args()
+
 
 def get_rotate_crop_image(img, points):
     '''
