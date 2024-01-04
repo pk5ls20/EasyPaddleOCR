@@ -12,7 +12,7 @@ authors = [
 description = "A simple, optional tool for PaddleOCR Detection, direction classification and recognition on CPU and GPU using torch."
 readme = "readme.md"
 license = { file="LICENSE" }
-requires-python = ">=3.9"
+requires-python = ">=3.9,<3.12"
 urls = {Code = "https://github.com/pk5ls20/EasyPaddleOCR", Documentation = "https://github.com/pk5ls20/EasyPaddleOCR", Download = "https://pypi.org/project/easypaddleocr", Homepage = "https://github.com/pk5ls20/EasyPaddleOCR", Issues = "https://github.com/pk5ls20/EasyPaddleOCR/issues"}
 dependencies = [
     "shapely",
@@ -24,6 +24,9 @@ dependencies = [
     "Pillow",
     "pyyaml",
     "torch",
+    "torchvision",
     "loguru",
     "huggingface_hub"
 ]
+[tool.setuptools]
+packages = ["easypaddleocr"]
