@@ -1,6 +1,13 @@
 name: Publish Python 🐍 distribution 📦 to PyPI and TestPyPI
 
-on: push
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: [ "basic test" ]  # 依赖的工作流名称
+    types:
+      - completed
+    conclusions:
+      - success
 
 jobs:
   build:
