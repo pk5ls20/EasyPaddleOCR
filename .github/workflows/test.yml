@@ -1,0 +1,27 @@
+name: basic test
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+jobs:
+  basis-test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+      - name: Build Package
+        run: |
+          python3 -m pip install build
+          python3 -m build
+          cd dist && pip install $(find . -name "easypaddleocr*.whl") && cd ..
+      - name: Test Package
+        run: |
+          pip install unittest
+          python3 -m unittest test.py

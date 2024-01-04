@@ -24,6 +24,9 @@ dependencies = [
     "Pillow",
     "pyyaml",
     "torch",
+    "torchvision",
     "loguru",
     "huggingface_hub"
 ]
+[tool.setuptools]
+packages = ["easypaddleocr"]
