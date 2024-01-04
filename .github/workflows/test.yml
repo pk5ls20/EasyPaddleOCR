@@ -23,5 +23,4 @@ jobs:
           cd dist && pip install $(find . -name "easypaddleocr*.whl") && cd ..
       - name: Test Package
         run: |
-          pip install unittest
           python3 -m unittest test.py
