@@ -30,4 +30,4 @@ dependencies = [
 ]
 
 [tool.setuptools.packages.find]
-exclude = ["test_images"]
+exclude = ["test"]
