@@ -1,6 +1,4 @@
 # EasyPaddleOCR
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fpk5ls20%2FEasyPaddleOCR.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fpk5ls20%2FEasyPaddleOCR?ref=badge_shield)
-
 A simple, optional tool for **PaddleOCR Detection, direction classification and recognition on CPU and GPU using torch**.
 
 ## Usage
@@ -22,7 +20,3 @@ print(result)
 
 ## Additional Notes:
 **This repository was originally the Fork of https://github.com/WenmuZhou/PytorchOCR**
-
-
-## License
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fpk5ls20%2FEasyPaddleOCR.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fpk5ls20%2FEasyPaddleOCR?ref=badge_large)
